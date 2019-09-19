@@ -358,8 +358,7 @@ public class PodCommsSession {
             let timeUntilExpirationAdvisory = (endOfServiceTime - Pod.endOfServiceImminentWindow - Pod.expirationAdvisoryWindow).timeIntervalSinceNow
             let expirationAdvisoryAlarm = PodAlert.expirationAdvisoryAlarm(alarmTime: timeUntilExpirationAdvisory, duration: Pod.expirationAdvisoryWindow)
             let shutdownImminentAlarm = PodAlert.shutdownImminentAlarm((endOfServiceTime - Pod.endOfServiceImminentWindow).timeIntervalSinceNow)
-            let autoOffAlarm = PodAlert.autoOffAlarm(active: false, countdownDuration: 0) // Turn Auto-off feature off
-            try configureAlerts([expirationAdvisoryAlarm, shutdownImminentAlarm, autoOffAlarm])
+            try configureAlerts([expirationAdvisoryAlarm, shutdownImminentAlarm])
         }
         
         // Insert Cannula
@@ -668,18 +667,18 @@ public class PodCommsSession {
         }
         let timeUntilExpirationAlert = expiryAlert.timeIntervalSinceNow 
         guard timeUntilExpirationAlert > 0 else {
-            return // past the expiration alert time
+            log.default("Pod expiration reminder alert for %s already past %s ago, ignoring", String(describing: expiryAlert), TimeInterval(seconds: -timeUntilExpirationAlert).stringValue)
+            return // past the expiration reminder alert time
         }
-        log.default("Setting pod expiration alert for %s in %s", String(describing: expiryAlert), TimeInterval(seconds: timeUntilExpirationAlert).stringValue)
+        log.default("Setting pod expiration reminder alert for %s in %s", String(describing: expiryAlert), TimeInterval(seconds: timeUntilExpirationAlert).stringValue)
         let expirationAlert = PodAlert.expirationAlert(timeUntilExpirationAlert)
         try configureAlerts([expirationAlert])
     }
 
     public func clearOptionalPodAlarms() throws {
         let lowReservoirAlarm = PodAlert.lowReservoirAlarm(0)
-        try configureAlerts([lowReservoirAlarm])
         let expirationAlert = PodAlert.expirationAlert(TimeInterval(hours: 0))
-        try configureAlerts([expirationAlert])
+        try configureAlerts([lowReservoirAlarm, expirationAlert])
     }
 }
 

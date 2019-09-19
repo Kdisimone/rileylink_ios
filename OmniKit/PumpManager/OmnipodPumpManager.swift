@@ -13,7 +13,7 @@ import RileyLinkBLEKit
 import UserNotifications
 import os.log
 
-fileprivate let tempBasalConfirmationBeeps: Bool = false // whether to emit temp basal confirmation beeps (debug)
+fileprivate let tempBasalConfirmationBeeps: Bool = false // whether to emit temp basal confirmation beeps (for testing)
 fileprivate let bolusConfirmationBeeps: Bool = true      // whether to emit bolus confirmation beeps
 fileprivate let basalConfirmationBeeps: Bool = true      // whether to emit basal confirmation beeps
 fileprivate let supplementaryBeeps: Bool = true          // whether to emit supplementary confirmation beeps

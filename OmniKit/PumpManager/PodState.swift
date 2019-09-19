@@ -144,8 +144,9 @@ public struct PodState: RawRepresentable, Equatable, CustomDebugStringConvertibl
     }
     
     public mutating func updateFromStatusResponse(_ response: StatusResponse) {
-        if activatedAt == nil {
-            self.activatedAt = Date() - response.timeActive
+        let activateAtComputed = Date() - response.timeActive
+        if activatedAt == nil || activateAtComputed < activatedAt! {
+            self.activatedAt = activateAtComputed
         }
         updateDeliveryStatus(deliveryStatus: response.deliveryStatus)
         lastInsulinMeasurements = PodInsulinMeasurements(statusResponse: response, validTime: Date())

@@ -117,7 +117,8 @@ extension AlertConfiguration {
             let ticks = UInt16(volume / Pod.pulseSize / 2)
             data.appendBigEndian(ticks)
         case .timeUntilAlert(let duration):
-            let minutes = UInt16(duration.minutes)
+            // round up to next minute
+            let minutes = UInt16((duration+30).minutes)
             data.appendBigEndian(minutes)
         }
         data.append(beepRepeat.rawValue)
