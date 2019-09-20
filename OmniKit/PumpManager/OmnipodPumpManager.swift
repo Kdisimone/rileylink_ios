@@ -18,7 +18,7 @@ fileprivate let bolusConfirmationBeeps: Bool = true      // whether to emit bolu
 fileprivate let basalConfirmationBeeps: Bool = true      // whether to emit basal confirmation beeps
 fileprivate let supplementaryBeeps: Bool = true          // whether to emit supplementary confirmation beeps
 
-fileprivate let defaultLowReservoirLevel: Double = 20    // default pod low reservior alert level (1..50)
+fileprivate let defaultPodLowReservoirLevel: Double = 10 // default pod low reservior alert level (1..50)
 
 
 public enum ReservoirAlertState {
@@ -670,10 +670,9 @@ extension OmnipodPumpManager {
                 do {
                     try session.checkInsertionCompleted()
                     if self.hasSetupPod {
-                        // TODO integrate optional Pod expiration reminder with UI and create
-                        // UI interface to adjust low reservoir and save in persistent storage
+                        // TODO integrate optional Pod expiration reminder with UI
                         if self.optionalPodAlarms {
-                            try session.setPodLowReserviorAlert(level: defaultLowReservoirLevel)
+                            try session.setPodLowReserviorAlert(level: defaultPodLowReservoirLevel)
                             try session.setPodExpirationAlert(expirationReminderDate: self.expirationReminderDate)
                         }
                         self.emitConfirmationBeep(session: session, beepConfigType: .bipBip)
@@ -1034,7 +1033,7 @@ extension OmnipodPumpManager {
             case .success(let session):
                 do {
                     if enabled {
-                        try session.setPodLowReserviorAlert(level: defaultLowReservoirLevel)
+                        try session.setPodLowReserviorAlert(level: defaultPodLowReservoirLevel)
                         try session.setPodExpirationAlert(expirationReminderDate: self.expirationReminderDate)
                     } else {
                         try session.clearOptionalPodAlarms()
