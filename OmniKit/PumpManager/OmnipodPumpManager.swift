@@ -670,7 +670,7 @@ extension OmnipodPumpManager {
                 do {
                     try session.checkInsertionCompleted()
                 } catch let error {
-                    self.log.error("Failed to fetch pod status: %{public}@", String(describing: error))
+                    self.log.error("Failed to fetch pump status: %{public}@", String(describing: error))
                 }
             case .failure(let error):
                 self.log.error("Failed to fetch pump status: %{public}@", String(describing: error))
