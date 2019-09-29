@@ -669,16 +669,8 @@ extension OmnipodPumpManager {
             case .success(let session):
                 do {
                     try session.checkInsertionCompleted()
-                    if self.hasSetupPod {
-                        // TODO integrate optional Pod expiration reminder with UI
-                        if self.optionalPodAlarms {
-                            try session.setPodLowReserviorAlert(level: defaultPodLowReservoirLevel)
-                            try session.setPodExpirationAlert(expirationReminderDate: self.expirationReminderDate)
-                        }
-                        self.emitConfirmationBeep(session: session, beepConfigType: .bipBip)
-                    }
                 } catch let error {
-                    self.log.error("Failed to fetch pod status or set alerts: %{public}@", String(describing: error))
+                    self.log.error("Failed to fetch pod status: %{public}@", String(describing: error))
                 }
             case .failure(let error):
                 self.log.error("Failed to fetch pump status: %{public}@", String(describing: error))
@@ -907,7 +899,7 @@ extension OmnipodPumpManager {
         #endif
     }
 
-    public func testingCommands(completion: @escaping (Error?) -> Void) {
+    public func readPodStatus(completion: @escaping (Error?) -> Void) {
         // use hasSetupPod instead of hasActivePod here so we don't fail on a faulted Pod here
         guard self.hasSetupPod else {
             completion(OmnipodPumpManagerError.noPodPaired)
@@ -919,7 +911,7 @@ extension OmnipodPumpManager {
             switch result {
             case .success(let session):
                 do {
-                    try session.testingCommands()
+                    try session.cancelNone() // reads status & verifies nonce by doing a cancel none
                     completion(nil)
                 } catch let error {
                     completion(error)
@@ -957,20 +949,20 @@ extension OmnipodPumpManager {
         }
     }
 
-    public func readFlashLogs(completion: @escaping (Error?) -> Void) {
+    public func readFlashLog(completion: @escaping (Error?) -> Void) {
         // use hasSetupPod instead of hasActivePod here so we don't fail on a faulted Pod here
         guard self.hasSetupPod else {
             completion(OmnipodPumpManagerError.noPodPaired)
             return
         }
         if self.state.podState?.fault == nil && self.state.podState?.unfinalizedBolus?.isFinished == false {
-            self.log.info("Skipping Read Flash Logs due to bolus still in progress.")
+            self.log.info("Skipping Read Flash Log due to bolus still in progress.")
             completion(PodCommsError.unfinalizedBolus)
             return
         }
 
         let rileyLinkSelector = self.rileyLinkDeviceProvider.firstConnectedDevice
-        self.podComms.runSession(withName: "Read Flash Logs", using: rileyLinkSelector) { (result) in
+        self.podComms.runSession(withName: "Read Flash Log", using: rileyLinkSelector) { (result) in
             switch result {
             case .success(let session):
                 do {

@@ -203,9 +203,9 @@ class OmnipodSettingsViewController: RileyLinkSettingsViewController {
     
     private enum ActionsRow: Int, CaseIterable {
         case suspendResume = 0
-        case testCommand
+        case readPodStatus
+        case readFlashLog
         case playTestBeeps
-        case readFlashLogs
         case replacePod
     }
     
@@ -333,19 +333,19 @@ class OmnipodSettingsViewController: RileyLinkSettingsViewController {
             switch actions[indexPath.row] {
             case .suspendResume:
                 return suspendResumeTableViewCell
-            case .testCommand:
+            case .readPodStatus:
                 let cell = tableView.dequeueReusableCell(withIdentifier: SettingsTableViewCell.className, for: indexPath)
-                cell.textLabel?.text = LocalizedString("Test Command", comment: "The title of the command to run the test command")
+                cell.textLabel?.text = LocalizedString("Read Pod Status", comment: "The title of the command to read Pod status")
+                cell.accessoryType = .disclosureIndicator
+                return cell
+            case .readFlashLog:
+                let cell = tableView.dequeueReusableCell(withIdentifier: SettingsTableViewCell.className, for: indexPath)
+                cell.textLabel?.text = LocalizedString("Read Flash Log", comment: "The title of the command to run read flash log")
                 cell.accessoryType = .disclosureIndicator
                 return cell
             case .playTestBeeps:
                 let cell = tableView.dequeueReusableCell(withIdentifier: SettingsTableViewCell.className, for: indexPath)
                 cell.textLabel?.text = LocalizedString("Play Test Beeps", comment: "The title of the command to play test beeps")
-                cell.accessoryType = .disclosureIndicator
-                return cell
-            case .readFlashLogs:
-                let cell = tableView.dequeueReusableCell(withIdentifier: SettingsTableViewCell.className, for: indexPath)
-                cell.textLabel?.text = LocalizedString("Read Flash Logs", comment: "The title of the command to run read flash logs")
                 cell.accessoryType = .disclosureIndicator
                 return cell
             case .replacePod:
@@ -494,16 +494,16 @@ class OmnipodSettingsViewController: RileyLinkSettingsViewController {
             case .suspendResume:
                 suspendResumeTapped()
                 tableView.deselectRow(at: indexPath, animated: true)
-            case .testCommand:
-                let vc = CommandResponseViewController.testingCommands(pumpManager: pumpManager)
+            case .readPodStatus:
+                let vc = CommandResponseViewController.readPodStatus(pumpManager: pumpManager)
+                vc.title = sender?.textLabel?.text
+                show(vc, sender: indexPath)
+            case .readFlashLog:
+                let vc = CommandResponseViewController.readFlashLog(pumpManager: pumpManager)
                 vc.title = sender?.textLabel?.text
                 show(vc, sender: indexPath)
             case .playTestBeeps:
                 let vc = CommandResponseViewController.playTestBeeps(pumpManager: pumpManager)
-                vc.title = sender?.textLabel?.text
-                show(vc, sender: indexPath)
-            case .readFlashLogs:
-                let vc = CommandResponseViewController.readFlashLogs(pumpManager: pumpManager)
                 vc.title = sender?.textLabel?.text
                 show(vc, sender: indexPath)
             case .replacePod:
@@ -588,7 +588,7 @@ class OmnipodSettingsViewController: RileyLinkSettingsViewController {
             switch ActionsRow(rawValue: indexPath.row)! {
             case .suspendResume, .replacePod:
                 break
-            case .testCommand, .playTestBeeps, .readFlashLogs:
+            case .readPodStatus, .readFlashLog, .playTestBeeps:
                 tableView.reloadRows(at: [indexPath], with: .fade)
             }
         case .configuration:

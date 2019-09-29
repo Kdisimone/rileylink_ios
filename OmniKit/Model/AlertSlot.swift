@@ -144,7 +144,7 @@ public enum PodAlert: CustomStringConvertible, RawRepresentable, Equatable {
             guard let alarmTime = rawValue["alarmTime"] as? Double else {
                 return nil
             }
-            self = .shutdownImminentAlarm(alarmTime)
+        self = .shutdownImminentAlarm(alarmTime)
         case "lowReservoirAlarm":
             guard let units = rawValue["units"] as? Double else {
                 return nil
