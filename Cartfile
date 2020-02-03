@@ -1,2 +1,2 @@
-github "LoopKit/LoopKit" ~> 3.0
+github "kdisimone/LoopKit" "ken-autobolus"
 github "LoopKit/MKRingProgressView" "appex-safe"
