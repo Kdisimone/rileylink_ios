@@ -43,11 +43,12 @@ class PodComms: CustomDebugStringConvertible {
         self.messageLogger = nil
     }
     
+
     private func assignAddress(address: UInt32, commandSession: CommandSession) throws {
         commandSession.assertOnSessionQueue()
 
         self.log.debug("Attempting pairing with address %{public}@", String(format: "%04X", address))
-        
+
         let messageTransportState = MessageTransportState(packetNumber: 0, messageNumber: 0)
         
         let transport = PodMessageTransport(session: commandSession, address: 0xffffffff, ackAddress: address, state: messageTransportState)
@@ -188,7 +189,6 @@ class PodComms: CustomDebugStringConvertible {
             device.runSession(withName: "Pair Pod") { (commandSession) in
                 do {
                     self.configureDevice(device, with: commandSession)
-
                     try self.assignAddress(address: address, commandSession: commandSession)
                     
                     guard self.podState != nil else {

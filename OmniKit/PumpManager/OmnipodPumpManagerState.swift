@@ -131,9 +131,13 @@ public struct OmnipodPumpManagerState: RawRepresentable, Equatable {
         }
 
         self.confirmationBeeps = rawValue["confirmationBeeps"] as? Bool ?? rawValue["bolusBeeps"] as? Bool ?? false
+<<<<<<< HEAD
 
         self.optionalPodAlarms = rawValue["optionalPodAlarms"] as? Bool ?? false
 
+=======
+        
+>>>>>>> 9b5800fac81a7bfb049402bf57a45fe84c235d64
         if let pairingAttemptAddress = rawValue["pairingAttemptAddress"] as? UInt32 {
             self.pairingAttemptAddress = pairingAttemptAddress
         }
@@ -159,6 +163,10 @@ public struct OmnipodPumpManagerState: RawRepresentable, Equatable {
         
         if let rileyLinkConnectionManagerState = rileyLinkConnectionManagerState {
             value["rileyLinkConnectionManagerState"] = rileyLinkConnectionManagerState.rawValue
+        }
+        
+        if let pairingAttemptAddress = pairingAttemptAddress {
+            value["pairingAttemptAddress"] = pairingAttemptAddress
         }
 
         if let pairingAttemptAddress = pairingAttemptAddress {
