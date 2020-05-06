@@ -571,6 +571,13 @@ extension OmnipodPumpManager {
         switch needsPairing {
         case .success(true):
             self.log.default("Pairing pod before priming")
+            
+            // Create random address with 20 bits to match PDM, could easily use 24 bits instead
+            if self.state.pairingAttemptAddress == nil {
+                self.lockedState.mutate { (state) in
+                    state.pairingAttemptAddress = 0x1f000000 | (arc4random() & 0x000fffff)
+                }
+            }
 
             // Create a new random pod address to use with 24 bits (PDM generated addresses only use 20 random bits)
             if self.state.pairingAttemptAddress == nil {
@@ -580,13 +587,12 @@ extension OmnipodPumpManager {
             }
 
             self.podComms.assignAddressAndSetupPod(address: self.state.pairingAttemptAddress!, using: deviceSelector, timeZone: .currentFixed, messageLogger: self) { (result) in
-
                 if case .success = result {
                     self.lockedState.mutate { (state) in
                         state.pairingAttemptAddress = nil
                     }
                 }
-
+                
                 // Calls completion
                 configureAndPrimeSession(result)
             }
